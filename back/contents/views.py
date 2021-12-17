@@ -6,6 +6,7 @@ from .serializers import WorkoutSerializer
 from .models import Workout
 from accounts.models import User
 from django.shortcuts import get_object_or_404
+import json
 # Create your views here.
 
 
@@ -14,13 +15,15 @@ from django.shortcuts import get_object_or_404
 @permission_classes([AllowAny])
 def Workoutinfo(request):
     if request.method == 'POST':
+        print(request.data)
         serializer = WorkoutSerializer(data=request.data)
- 
+        workset = json.dumps(request.data['set'])
+        worktime = json.dumps(request.data['time'])
         user = User.objects.filter(username=request.data.get('userr')).first()
-    
-        # return Response(request.data2)
+        print(serializer)
+
         if serializer.is_valid(raise_exception=True):
-            serializer.save(user=user)
+            serializer.save(user=user, se=workset, tim = worktime)
             
             return Response(serializer.data)
         # return Response(request.data)
@@ -31,5 +34,5 @@ def Calendar(request):
     if request.method == 'POST':
         workout = Workout.objects.all()
         serializer = WorkoutSerializer(workout,many=True,)
-        print(serializer)
+        # print(serializer)
         return Response(serializer.data)
